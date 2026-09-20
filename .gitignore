@@ -1,9 +1,11 @@
-# Miscellaneous
+# Miscellaneous & OS artifacts
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
+Thumbs.db
+Desktop.ini
 .atom/
 .build/
 .buildlog/
@@ -11,6 +13,11 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+
+# Local Environment & Secrets (机密与本地环境变量)
+.env
+*.env
+*.env.*
 
 # IntelliJ related
 *.iml
@@ -20,6 +27,13 @@ migrate_working_dir/
 
 # Visual Studio Code
 .vscode/
+
+# Visual Studio / Windows user-specific artifacts
+*.suo
+*.user
+*.userosv
+*.sln.docstates
+CMakeSettings.json
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -37,12 +51,20 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio / Gradle artifacts
+# Android Studio / Gradle / Local SDK paths (本地私有路径，绝对不可提交)
+/android/local.properties
+**/local.properties
 /android/app/debug
 /android/app/profile
 /android/app/release
 .gradle/
 **/android/.gradle/
+
+# Android Keystores & Signing Keys (签名私钥与证书)
+*.keystore
+*.jks
+key.properties
+**/key.properties
 
 # Windows desktop ephemeral artifacts
 /windows/flutter/ephemeral/
