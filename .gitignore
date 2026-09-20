@@ -1,0 +1,61 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio / Gradle artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+.gradle/
+**/android/.gradle/
+
+# Windows desktop ephemeral artifacts
+/windows/flutter/ephemeral/
+
+# Collaboration & Agent docs (不随项目代码提交)
+/AGENTS.md
+/CONTEXT.md
+
+# Lunova Local Vaults & Test Data (本地便携资料库与数据库文件)
+/dev_vault/
+/vault/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-journal
