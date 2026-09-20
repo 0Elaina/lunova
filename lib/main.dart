@@ -1,121 +1,178 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'src/core/database/app_database.dart';
+import 'src/core/vault/vault_service.dart';
+import 'src/features/groups/data/group_repository.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: LunovaApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class LunovaApp extends StatelessWidget {
+  const LunovaApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Lunova 图片管理',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const M1VerificationPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+/// M1 阶段基础设施与数据层验证页
+class M1VerificationPage extends ConsumerStatefulWidget {
+  const M1VerificationPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<M1VerificationPage> createState() => _M1VerificationPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _M1VerificationPageState extends ConsumerState<M1VerificationPage> {
+  String _vaultPath = '正在获取...';
+  bool _isInit = false;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _loadVaultInfo();
+  }
+
+  Future<void> _loadVaultInfo() async {
+    final vaultService = VaultService();
+    final path = await vaultService.getDefaultVaultPath();
+    if (mounted) {
+      setState(() {
+        _vaultPath = path;
+        _isInit = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final groupRepo = ref.watch(groupRepositoryProvider);
+
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Lunova 基础设施验证 (M1)'),
+        elevation: 2,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Card(
+              elevation: 0,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '资料库物理存储状态',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text('资料库根路径: $_vaultPath'),
+                    const SizedBox(height: 4),
+                    const Text(
+                      '便携模式: 已启用 (Windows Debug 模式自动隔离至工程内 dev_vault)',
+                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '数据库 Groups 表响应式流 (Stream)',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                FilledButton.icon(
+                  onPressed: !_isInit
+                      ? null
+                      : () async {
+                          final now = DateTime.now();
+                          await groupRepo.createGroup(
+                            GroupsCompanion.insert(
+                              name: '素材分组 ${now.hour}:${now.minute}:${now.second}',
+                              icon: const Value('folder'),
+                              sortOrder: const Value(0),
+                            ),
+                          );
+                        },
+                  icon: const Icon(Icons.add),
+                  label: const Text('写入测试分组'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: StreamBuilder(
+                stream: groupRepo.watchAllGroups(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('读取异常: ${snapshot.error}'));
+                  }
+
+                  final groups = snapshot.data ?? [];
+                  if (groups.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.folder_open, size: 64, color: Colors.grey.shade400),
+                          const SizedBox(height: 8),
+                          const Text('当前数据库为空，点击右上角按钮写入测试数据'),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.separated(
+                    itemCount: groups.length,
+                    separatorBuilder: (context, index) => const Divider(height: 1),
+
+                    itemBuilder: (context, index) {
+                      final g = groups[index];
+                      return ListTile(
+                        leading: const CircleAvatar(child: Icon(Icons.folder)),
+                        title: Text(g.name),
+                        subtitle: Text('ID: ${g.id} | 创建时间: ${g.createdAt.toLocal()}'),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          onPressed: () => groupRepo.deleteGroup(g.id),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
