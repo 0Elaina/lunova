@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -86,5 +87,9 @@ class VaultService {
     final month = importedAt.month.toString().padLeft(2, '0');
     return p.join(vaultPath, originalsDirName, year, month, fileName);
   }
-
 }
+
+/// 全局只读 VaultService 提供者
+final vaultServiceProvider = Provider<VaultService>((ref) {
+  return VaultService();
+});
