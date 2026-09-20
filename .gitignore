@@ -72,6 +72,7 @@ key.properties
 # Collaboration & Agent docs (不随项目代码提交)
 /AGENTS.md
 /CONTEXT.md
+/prototype/
 
 # Lunova Local Vaults & Test Data (本地便携资料库与数据库文件)
 /dev_vault/
