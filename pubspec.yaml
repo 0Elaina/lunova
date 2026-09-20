@@ -45,6 +45,7 @@ dependencies:
   mime: ^2.0.0
   google_fonts: ^6.2.1
   flutter_lucide: ^1.2.1
+  window_manager: ^0.4.3
 
 dev_dependencies:
   flutter_test:

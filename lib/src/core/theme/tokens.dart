@@ -19,6 +19,13 @@ enum AppSkyTheme {
   final Brightness brightness;
 
   bool get isDark => brightness == Brightness.dark;
+
+  /// 标准功能简明文案（用于顶栏切换器）
+  String get functionalLabel => switch (this) {
+        AppSkyTheme.dawn => '浅色',
+        AppSkyTheme.twilight => '暮色',
+        AppSkyTheme.starlight => '深色',
+      };
 }
 
 /// 四阶天光漫射色阶代币 (4-Stop Ambient Sky Wash)
